@@ -1,5 +1,6 @@
 
 import os
+import logging
 
 from flask import Flask, render_template, request, jsonify
 from dotenv import load_dotenv
@@ -9,40 +10,64 @@ load_dotenv()
 
 app = Flask(__name__)
 
+# Reject excessively large HTTP request bodies.
+app.config["MAX_CONTENT_LENGTH"] = 16 * 1024
 
-# First page: New dashboard
+logging.basicConfig(level=logging.INFO)
+
+
 @app.route("/")
 def home():
     return render_template("dashboard.html")
 
 
-# Inside page: Your existing AI healthcare website
 @app.route("/assistant")
 def assistant():
     return render_template("index.html")
 
 
-# Existing Gemini AI API - unchanged
+@app.errorhandler(413)
+def request_too_large(error):
+    return jsonify({
+        "error": "Request is too large. Please shorten your question."
+    }), 413
+
+
 @app.route("/api/ask", methods=["POST"])
 def ask_assistant():
-    data = request.get_json(silent=True) or {}
-    question = data.get("question", "")
+    # Accept JSON requests only.
+    if not request.is_json:
+        return jsonify({
+            "error": "Please send your question as JSON."
+        }), 415
+
+    data = request.get_json(silent=True)
+
+    if not isinstance(data, dict):
+        return jsonify({
+            "error": "Invalid request. Please try again."
+        }), 400
+
+    question = data.get("question")
 
     if not isinstance(question, str) or not question.strip():
         return jsonify({
             "error": "Please enter your question."
         }), 400
 
+    question = question.strip()
+
     if len(question) > 1000:
         return jsonify({
-            "error": "Question must be under 1000 characters."
+            "error": "Your question must be 1000 characters or fewer."
         }), 400
 
     api_key = os.getenv("GEMINI_API_KEY")
 
     if not api_key:
+        app.logger.error("GEMINI_API_KEY is not configured")
         return jsonify({
-            "error": "API key missing. Check your .env file."
+            "error": "AI service is not configured. Please try again later."
         }), 503
 
     try:
@@ -52,34 +77,37 @@ def ask_assistant():
             model="gemini-2.5-flash",
             contents=(
                 "You are VillageCare AI, a health education assistant "
-                "for village communities. Give simple, general health "
-                "information. Do not diagnose illnesses or prescribe "
-                "medicines. Encourage users to consult a qualified doctor. "
-                "For emergencies, advise immediate medical care. "
-                "In India, call 112 for emergencies. "
-                "Reply in the language used by the user when possible.\n\n"
-                f"Question: {question.strip()}"
+                "for village communities. Provide simple, general health "
+                "information. Do not diagnose diseases or prescribe "
+                "medicines. Encourage users to consult qualified healthcare "
+                "professionals. For emergencies, advise immediate medical "
+                "care and mention India's emergency number, 112. "
+                "Reply in the user's language when possible.\n\n"
+                f"Question: {question}"
             ),
         )
 
         answer = response.text
 
-        if not answer:
-            answer = (
-                "Sorry, I could not generate an answer. Please try again."
-            )
+        if not isinstance(answer, str) or not answer.strip():
+            app.logger.warning("Gemini returned an empty response")
+            return jsonify({
+                "error": "No answer was generated. Please try again."
+            }), 502
 
-        return jsonify({"answer": answer})
+        return jsonify({"answer": answer.strip()})
 
     except Exception:
-        app.logger.exception("Gemini API request failed")
-
+        # Keep technical details in server logs, not in the public response.
+        app.logger.exception("AI request failed")
         return jsonify({
             "error": (
-                "AI service unavailable. Check the terminal for details."
+                "The AI service is temporarily unavailable. "
+                "Please try again later."
             )
         }), 502
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    # Debug mode is disabled to avoid exposing debugger details.
+    app.run(debug=False)
