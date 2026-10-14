@@ -4,76 +4,639 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VillageCare AI | Smart Healthcare</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-</head>
-<body>
+    <meta name="theme-color" content="#087f8c">
+    <meta name="description" content="VillageCare AI provides simple healthcare awareness information for rural communities.">
 
+    <title>VillageCare AI | Village Health Assistant</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #087f8c;
+            --primary-dark: #06636d;
+            --background: #f3f8f7;
+            --text: #183b3d;
+            --muted: #637879;
+            --white: #ffffff;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background: var(--background);
+            color: var(--text);
+            line-height: 1.6;
+        }
+
+        header {
+            background: var(--white);
+            padding: 16px 7%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+            box-shadow: 0 2px 12px #0000000c;
+        }
+
+        .logo {
+            font-size: 23px;
+            font-weight: bold;
+            color: var(--primary);
+        }
+
+        nav {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        nav a {
+            text-decoration: none;
+            color: var(--text);
+            font-weight: 600;
+        }
+
+        nav a:hover {
+            color: var(--primary);
+        }
+
+        .hero {
+            padding: 70px 7%;
+            display: grid;
+            grid-template-columns: 1.3fr 0.7fr;
+            align-items: center;
+            gap: 35px;
+            background: linear-gradient(135deg, #e1f5f1, #f5fbf8);
+        }
+
+        .tag {
+            display: inline-block;
+            background: #d0eee8;
+            color: var(--primary-dark);
+            padding: 7px 14px;
+            border-radius: 30px;
+            font-size: 13px;
+            font-weight: bold;
+            margin-bottom: 16px;
+        }
+
+        .hero h1 {
+            font-size: clamp(32px, 5vw, 54px);
+            line-height: 1.15;
+            margin-bottom: 20px;
+        }
+
+        .hero h1 span {
+            color: var(--primary);
+        }
+
+        .hero p {
+            color: var(--muted);
+            font-size: 17px;
+            max-width: 600px;
+            margin-bottom: 25px;
+        }
+
+        .primary-button {
+            display: inline-block;
+            background: var(--primary);
+            color: var(--white);
+            padding: 13px 23px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: bold;
+            border: none;
+            cursor: pointer;
+        }
+
+        .primary-button:hover {
+            background: var(--primary-dark);
+        }
+
+        .hero-art {
+            background: var(--white);
+            padding: 30px;
+            border-radius: 24px;
+            text-align: center;
+            box-shadow: 0 12px 35px #0a626515;
+        }
+
+        .hero-art .emoji {
+            font-size: 85px;
+            line-height: 1.5;
+        }
+
+        .hero-art h2 {
+            color: var(--primary);
+            margin-bottom: 8px;
+        }
+
+        .hero-art p {
+            margin: 0 auto;
+        }
+
+        section {
+            padding: 55px 7%;
+        }
+
+        .section-heading {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .section-heading h2 {
+            font-size: 30px;
+            margin-bottom: 8px;
+        }
+
+        .section-heading p {
+            color: var(--muted);
+        }
+
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 20px;
+        }
+
+        .card {
+            background: var(--white);
+            padding: 25px;
+            border-radius: 16px;
+            border: 1px solid #e3eeeb;
+            box-shadow: 0 5px 18px #123b3b08;
+            transition: transform 0.2s;
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+        }
+
+        .card .icon {
+            font-size: 34px;
+            margin-bottom: 12px;
+        }
+
+        .card h3 {
+            margin-bottom: 10px;
+        }
+
+        .card p {
+            color: var(--muted);
+            font-size: 14px;
+        }
+
+        .assistant-section {
+            background: #e6f4f1;
+        }
+
+        .chat {
+            max-width: 760px;
+            margin: auto;
+            background: var(--white);
+            border-radius: 18px;
+            overflow: hidden;
+            box-shadow: 0 8px 30px #153f3f12;
+        }
+
+        .chat-header {
+            background: var(--primary);
+            color: var(--white);
+            padding: 20px;
+        }
+
+        .chat-header h2 {
+            font-size: 22px;
+        }
+
+        .chat-header p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        #messages {
+            padding: 20px;
+            height: 320px;
+            overflow-y: auto;
+            background: #fbfdfc;
+        }
+
+        .message {
+            padding: 12px 15px;
+            margin-bottom: 12px;
+            border-radius: 12px;
+            max-width: 90%;
+            white-space: pre-wrap;
+            overflow-wrap: anywhere;
+            font-size: 14px;
+        }
+
+        .bot {
+            background: #e5f3ef;
+            margin-right: auto;
+        }
+
+        .user {
+            background: var(--primary);
+            color: white;
+            margin-left: auto;
+        }
+
+        .chat-form {
+            padding: 15px;
+            display: flex;
+            gap: 10px;
+            border-top: 1px solid #e7eeee;
+        }
+
+        #question {
+            flex: 1;
+            min-width: 0;
+            padding: 13px;
+            border: 1px solid #ccdcd9;
+            border-radius: 9px;
+            font: inherit;
+            outline-color: var(--primary);
+        }
+
+        #sendButton {
+            padding: 12px 18px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 9px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        #sendButton:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .suggestions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            padding: 0 15px 18px;
+        }
+
+        .suggestions button {
+            padding: 8px 11px;
+            background: #f0f8f6;
+            border: 1px solid #d7e9e4;
+            color: var(--primary-dark);
+            border-radius: 20px;
+            cursor: pointer;
+        }
+
+        .suggestions button:hover {
+            background: #dcefe9;
+        }
+
+        .disclaimer {
+            padding: 0 20px 20px;
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        footer {
+            padding: 25px 7%;
+            text-align: center;
+            background: #153f42;
+            color: white;
+            font-size: 14px;
+        }
+
+        @media (max-width: 750px) {
+            header {
+                flex-direction: column;
+            }
+
+            nav {
+                justify-content: center;
+                gap: 15px;
+            }
+
+            .hero {
+                grid-template-columns: 1fr;
+                padding-top: 45px;
+            }
+
+            .hero-art .emoji {
+                font-size: 70px;
+            }
+
+            .cards {
+                grid-template-columns: 1fr;
+            }
+
+            section {
+                padding: 40px 5%;
+            }
+
+            .chat-form {
+                flex-wrap: wrap;
+            }
+
+            #question {
+                flex-basis: 100%;
+            }
+
+            #sendButton {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
     <header>
-        <div class="logo">VillageCare <span>AI</span></div>
-        <nav>
+        <div class="logo">🌿 VillageCare AI</div>
+
+        <nav aria-label="Main navigation">
             <a href="#home">Home</a>
+            <a href="#health">Health Tips</a>
             <a href="#assistant">AI Assistant</a>
-            <a href="#services">Health Services</a>
-            <a href="#about">About</a>
         </nav>
     </header>
 
     <main>
-        <section id="home" class="hero">
-            <div class="hero-content">
-                <p class="tag">YOUR COMMUNITY HEALTH PARTNER</p>
-                <h1>Better Healthcare,<br><span>Closer to Home.</span></h1>
-                <p>Simple health information and healthcare resources
-                   for every village, in a language you understand.</p>
-                <a class="button" href="#assistant">Explore Health Assistant →</a>
+        <section class="hero" id="home">
+            <div>
+                <span class="tag">HEALTHCARE AWARENESS FOR EVERY VILLAGE</span>
+
+                <h1>
+                    Healthier Villages,<br>
+                    <span>Better Futures.</span>
+                </h1>
+
+                <p>
+                    Your simple AI-powered health awareness companion.
+                    Learn about clean drinking water, hygiene, nutrition,
+                    mosquito prevention, and when to seek medical help.
+                </p>
+
+                <a href="#assistant" class="primary-button">
+                    Ask VillageCare AI →
+                </a>
             </div>
-            <div class="hero-icon">🌿</div>
-        </section>
 
-        <section id="assistant" class="card">
-            <h2>AI Health Assistant</h2>
-            <p>Ask a general health information question.</p>
-            <textarea id="question"
-                placeholder="Example: How can I maintain a healthy diet?"></textarea>
-            <button id="askButton">Ask Assistant →</button>
-            <p id="answer" aria-live="polite"></p>
-            <small>This demonstration does not provide a diagnosis or replace
-                a qualified healthcare professional.</small>
-        </section>
-
-        <section id="services">
-            <h2 class="section-title">Healthcare for Everyone</h2>
-            <div class="services">
-                <div class="service-card">
-                    <div class="service-icon">🏥</div>
-                    <h3>Healthcare Centres</h3>
-                    <p>Find verified local hospitals and health centres.</p>
-                </div>
-                <div class="service-card">
-                    <div class="service-icon">💬</div>
-                    <h3>Simple Health Information</h3>
-                    <p>Understand general health information more easily.</p>
-                </div>
-                <div class="service-card">
-                    <div class="service-icon">🌐</div>
-                    <h3>Local Languages</h3>
-                    <p>Our planned assistant will support Telugu and English.</p>
-                </div>
+            <div class="hero-art">
+                <div class="emoji" aria-hidden="true">🏡💚</div>
+                <h2>Care for Every Community</h2>
+                <p>
+                    Clear health awareness information designed
+                    with village communities in mind.
+                </p>
             </div>
         </section>
 
-        <section id="about" class="about">
-            <h2>Our Mission</h2>
-            <p>VillageCare AI aims to make health information easier to
-               understand and community healthcare services easier to find.</p>
+        <section id="health">
+            <div class="section-heading">
+                <h2>Everyday Health Awareness</h2>
+                <p>Small healthy habits can make a big difference.</p>
+            </div>
+
+            <div class="cards">
+                <article class="card">
+                    <div class="icon" aria-hidden="true">💧</div>
+                    <h3>Safe Drinking Water</h3>
+                    <p>
+                        Use a safe water source, follow local water
+                        treatment guidance, and store drinking water
+                        in a clean, covered container.
+                    </p>
+                </article>
+
+                <article class="card">
+                    <div class="icon" aria-hidden="true">🧼</div>
+                    <h3>Hygiene and Sanitation</h3>
+                    <p>
+                        Wash hands with soap, keep food covered,
+                        and maintain clean surroundings to help
+                        reduce the spread of infections.
+                    </p>
+                </article>
+
+                <article class="card">
+                    <div class="icon" aria-hidden="true">🥗</div>
+                    <h3>Healthy Nutrition</h3>
+                    <p>
+                        Eat a varied diet with vegetables, fruits,
+                        pulses, and other locally available nutritious
+                        foods. Seek professional advice when needed.
+                    </p>
+                </article>
+
+                <article class="card">
+                    <div class="icon" aria-hidden="true">🦟</div>
+                    <h3>Mosquito Prevention</h3>
+                    <p>
+                        Remove stagnant water where mosquitoes breed,
+                        use suitable protection, and follow local
+                        public health advice.
+                    </p>
+                </article>
+
+                <article class="card">
+                    <div class="icon" aria-hidden="true">🩺</div>
+                    <h3>Health Checkups</h3>
+                    <p>
+                        Visit a qualified healthcare professional
+                        for recommended checkups, vaccinations,
+                        and health concerns.
+                    </p>
+                </article>
+
+                <article class="card">
+                    <div class="icon" aria-hidden="true">🤝</div>
+                    <h3>Community Wellbeing</h3>
+                    <p>
+                        Share reliable health information and help
+                        community members find appropriate local
+                        healthcare services.
+                    </p>
+                </article>
+            </div>
+        </section>
+
+        <section class="assistant-section" id="assistant">
+            <div class="section-heading">
+                <h2>Ask VillageCare AI</h2>
+                <p>
+                    Ask a question about health awareness or community
+                    wellbeing in simple language.
+                </p>
+            </div>
+
+            <div class="chat">
+                <div class="chat-header">
+                    <h2>🌿 VillageCare Assistant</h2>
+                    <p>Your health awareness companion</p>
+                </div>
+
+                <div id="messages" aria-live="polite" aria-label="Chat messages">
+                    <div class="message bot">
+                        Hello! 👋 I am VillageCare AI.
+
+                        You can ask me about safe drinking water,
+                        hygiene, nutrition, mosquito prevention,
+                        and general healthcare awareness.
+
+                        How can I help you today?
+                    </div>
+                </div>
+
+                <form class="chat-form" id="chatForm">
+                    <input
+                        type="text"
+                        id="question"
+                        name="question"
+                        placeholder="Type your question here..."
+                        aria-label="Your health awareness question"
+                        maxlength="2000"
+                        autocomplete="off"
+                        required
+                    >
+
+                    <button type="submit" id="sendButton">
+                        Send →
+                    </button>
+                </form>
+
+                <div class="suggestions">
+                    <button
+                        type="button"
+                        data-question="How can we keep drinking water safe in a village?"
+                    >
+                        💧 Safe water
+                    </button>
+
+                    <button
+                        type="button"
+                        data-question="How can villagers prevent mosquito breeding?"
+                    >
+                        🦟 Mosquito prevention
+                    </button>
+
+                    <button
+                        type="button"
+                        data-question="What are simple daily hygiene habits?"
+                    >
+                        🧼 Hygiene
+                    </button>
+                </div>
+
+                <p class="disclaimer">
+                    Important: This assistant provides general health
+                    awareness information, not a diagnosis or emergency
+                    service. Contact a qualified healthcare professional
+                    for medical advice. In an emergency in India, call 112.
+                </p>
+            </div>
         </section>
     </main>
 
     <footer>
-        <p>VillageCare AI | Building Healthier Communities Together</p>
+        <p>© 2026 VillageCare AI | Supporting healthier communities 🌿</p>
     </footer>
 
-    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+    <script>
+        const chatForm = document.getElementById("chatForm");
+        const questionInput = document.getElementById("question");
+        const messages = document.getElementById("messages");
+        const sendButton = document.getElementById("sendButton");
+
+        function addMessage(text, type) {
+            const message = document.createElement("div");
+            message.className = "message " + type;
+
+            // Display text safely without interpreting HTML.
+            message.textContent = text;
+
+            messages.appendChild(message);
+            messages.scrollTop = messages.scrollHeight;
+
+            return message;
+        }
+
+        async function askVillageCare(question) {
+            const cleanQuestion = question.trim();
+
+            if (!cleanQuestion || sendButton.disabled) {
+                return;
+            }
+
+            addMessage(cleanQuestion, "user");
+            questionInput.value = "";
+            sendButton.disabled = true;
+            sendButton.textContent = "Thinking...";
+
+            const loadingMessage = addMessage(
+                "Please wait while VillageCare AI prepares an answer...",
+                "bot"
+            );
+
+            try {
+                const response = await fetch("/api/ask", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        question: cleanQuestion
+                    })
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(
+                        data.error || "The request could not be completed."
+                    );
+                }
+
+                if (typeof data.answer !== "string" || !data.answer.trim()) {
+                    throw new Error("The AI returned no answer.");
+                }
+
+                loadingMessage.textContent = data.answer;
+
+            } catch (error) {
+                console.error("VillageCare AI request failed:", error);
+
+                loadingMessage.textContent =
+                    "Sorry, I could not get an answer. " +
+                    error.message +
+                    " Please try again later.";
+
+            } finally {
+                sendButton.disabled = false;
+                sendButton.textContent = "Send →";
+                questionInput.focus();
+                messages.scrollTop = messages.scrollHeight;
+            }
+        }
+
+        chatForm.addEventListener("submit", function (event) {
+            event.preventDefault();
+            askVillageCare(questionInput.value);
+        });
+
+        document.querySelectorAll("[data-question]").forEach(function (button) {
+            button.addEventListener("click", function () {
+                askVillageCare(button.dataset.question);
+            });
+        });
+    </script>
 </body>
 </html>

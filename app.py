@@ -1,7 +1,8 @@
 
 import os
 import logging
-from flask import Flask, request, jsonify
+
+from flask import Flask, request, jsonify, render_template
 from google import genai
 from google.genai import errors
 
@@ -10,20 +11,27 @@ app = Flask(__name__)
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-# Use GEMINI_API_KEY explicitly
+# Gemini API configuration
 api_key = os.environ.get("GEMINI_API_KEY")
-
 client = genai.Client(api_key=api_key) if api_key else None
 
 
+# Homepage
 @app.route("/", methods=["GET"])
 def home():
+    return render_template("index.html")
+
+
+# Health check
+@app.route("/api/health", methods=["GET"])
+def health():
     return jsonify({
         "message": "VillageCare AI API is running",
         "status": "ok"
     }), 200
 
 
+# AI Assistant
 @app.route("/api/ask", methods=["POST"])
 def ask_assistant():
     if client is None:
@@ -44,10 +52,10 @@ def ask_assistant():
             model="gemini-2.5-flash",
             contents=(
                 "You are VillageCare AI, a helpful assistant for rural "
-                "communities. Provide clear, safe, easy-to-understand "
-                "information about village healthcare awareness and "
-                "community wellbeing. Do not diagnose medical conditions. "
-                "Encourage professional medical care when appropriate.\n\n"
+                "communities. Give clear, simple healthcare awareness "
+                "information. Do not diagnose illnesses or replace "
+                "a qualified healthcare professional. Encourage users "
+                "to seek professional medical care when appropriate.\n\n"
                 f"User question: {prompt.strip()}"
             )
         )
@@ -55,7 +63,6 @@ def ask_assistant():
         answer = response.text
 
         if not answer:
-            logger.error("Gemini returned an empty response")
             return jsonify({
                 "error": "The AI returned an empty response. Please try again."
             }), 502
@@ -63,7 +70,6 @@ def ask_assistant():
         return jsonify({"answer": answer}), 200
 
     except errors.APIError as exc:
-        # Log the actual provider error on the server only.
         logger.exception("Gemini API request failed")
 
         if exc.code in (401, 403):
