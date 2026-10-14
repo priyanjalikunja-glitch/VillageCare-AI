@@ -1,4 +1,3 @@
-
 import os
 
 from flask import Flask, render_template, request, jsonify
@@ -10,33 +9,29 @@ load_dotenv()
 app = Flask(__name__)
 
 
-# First page: New dashboard
+# Home dashboard
 @app.route("/")
 def home():
     return render_template("dashboard.html")
 
 
-# Inside page: Your existing AI healthcare website
+# Healthcare AI assistant page
 @app.route("/assistant")
 def assistant():
     return render_template("index.html")
 
 
-# Existing Gemini AI API - unchanged
+# AI question API
 @app.route("/api/ask", methods=["POST"])
 def ask_assistant():
     data = request.get_json(silent=True) or {}
     question = data.get("question", "")
 
     if not isinstance(question, str) or not question.strip():
-        return jsonify({
-            "error": "Please enter your question."
-        }), 400
+        return jsonify({"error": "Please enter your question."}), 400
 
     if len(question) > 1000:
-        return jsonify({
-            "error": "Question must be under 1000 characters."
-        }), 400
+        return jsonify({"error": "Question must be under 1000 characters."}), 400
 
     api_key = os.getenv("GEMINI_API_KEY")
 
@@ -49,7 +44,7 @@ def ask_assistant():
         client = genai.Client(api_key=api_key)
 
         response = client.models.generate_content(
-            model="gemini-3.8-flash",
+            model="gemini-3.1-flash",
             contents=(
                 "You are VillageCare AI, a health education assistant "
                 "for village communities. Give simple, general health "
@@ -65,19 +60,14 @@ def ask_assistant():
         answer = response.text
 
         if not answer:
-            answer = (
-                "Sorry, I could not generate an answer. Please try again."
-            )
+            answer = "Sorry, I could not generate an answer. Please try again."
 
         return jsonify({"answer": answer})
 
     except Exception:
         app.logger.exception("Gemini API request failed")
-
         return jsonify({
-            "error": (
-                "AI service unavailable. Check the terminal for details."
-            )
+            "error": "AI service unavailable. Check the terminal for details."
         }), 502
 
 
