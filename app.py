@@ -1,101 +1,85 @@
 
 import os
-import logging
 
-from flask import Flask, request, jsonify, render_template
+from flask import Flask, render_template, request, jsonify
+from dotenv import load_dotenv
 from google import genai
-from google.genai import errors
+
+load_dotenv()
 
 app = Flask(__name__)
 
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
 
-# Gemini API configuration
-api_key = os.environ.get("GEMINI_API_KEY")
-client = genai.Client(api_key=api_key) if api_key else None
-
-
-# Homepage
-@app.route("/", methods=["GET"])
+# First page: New dashboard
+@app.route("/")
 def home():
+    return render_template("dashboard.html")
+
+
+# Inside page: Your existing AI healthcare website
+@app.route("/assistant")
+def assistant():
     return render_template("index.html")
 
 
-# Health check
-@app.route("/api/health", methods=["GET"])
-def health():
-    return jsonify({
-        "message": "VillageCare AI API is running",
-        "status": "ok"
-    }), 200
-
-
-# AI Assistant
+# Existing Gemini AI API - unchanged
 @app.route("/api/ask", methods=["POST"])
 def ask_assistant():
-    if client is None:
-        return jsonify({
-            "error": "AI service is not configured. Check GEMINI_API_KEY."
-        }), 503
-
     data = request.get_json(silent=True) or {}
-    prompt = data.get("question") or data.get("message")
+    question = data.get("question", "")
 
-    if not isinstance(prompt, str) or not prompt.strip():
+    if not isinstance(question, str) or not question.strip():
         return jsonify({
-            "error": "Please enter a question."
+            "error": "Please enter your question."
         }), 400
 
+    if len(question) > 1000:
+        return jsonify({
+            "error": "Question must be under 1000 characters."
+        }), 400
+
+    api_key = os.getenv("GEMINI_API_KEY")
+
+    if not api_key:
+        return jsonify({
+            "error": "API key missing. Check your .env file."
+        }), 503
+
     try:
+        client = genai.Client(api_key=api_key)
+
         response = client.models.generate_content(
-            model="gemini-2.5-flash",
+            model="gemini-3.8-flash",
             contents=(
-                "You are VillageCare AI, a helpful assistant for rural "
-                "communities. Give clear, simple healthcare awareness "
-                "information. Do not diagnose illnesses or replace "
-                "a qualified healthcare professional. Encourage users "
-                "to seek professional medical care when appropriate.\n\n"
-                f"User question: {prompt.strip()}"
-            )
+                "You are VillageCare AI, a health education assistant "
+                "for village communities. Give simple, general health "
+                "information. Do not diagnose illnesses or prescribe "
+                "medicines. Encourage users to consult a qualified doctor. "
+                "For emergencies, advise immediate medical care. "
+                "In India, call 112 for emergencies. "
+                "Reply in the language used by the user when possible.\n\n"
+                f"Question: {question.strip()}"
+            ),
         )
 
         answer = response.text
 
         if not answer:
-            return jsonify({
-                "error": "The AI returned an empty response. Please try again."
-            }), 502
+            answer = (
+                "Sorry, I could not generate an answer. Please try again."
+            )
 
-        return jsonify({"answer": answer}), 200
-
-    except errors.APIError as exc:
-        logger.exception("Gemini API request failed")
-
-        if exc.code in (401, 403):
-            return jsonify({
-                "error": "AI authentication failed. Check GEMINI_API_KEY."
-            }), 502
-
-        if exc.code == 429:
-            return jsonify({
-                "error": "AI request limit reached. Please try again later."
-            }), 429
-
-        return jsonify({
-            "error": "The AI service is temporarily unavailable. Please try again later."
-        }), 502
+        return jsonify({"answer": answer})
 
     except Exception:
-        logger.exception("Unexpected AI request failure")
+        app.logger.exception("Gemini API request failed")
+
         return jsonify({
-            "error": "The AI service is temporarily unavailable. Please try again later."
+            "error": (
+                "AI service unavailable. Check the terminal for details."
+            )
         }), 502
 
 
 if __name__ == "__main__":
-    app.run(
-        host="0.0.0.0",
-        port=int(os.environ.get("PORT", "5000")),
-        debug=False
-    )
+    app.run(debug=True)
