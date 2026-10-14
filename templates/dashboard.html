@@ -1,0 +1,328 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VillageCare AI | Welcome</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #031b17;
+            color: #f4fff9;
+        }
+
+        .page {
+            min-height: 100vh;
+            overflow: hidden;
+            background:
+                radial-gradient(ellipse at 50% 38%, #087b56, transparent 48%),
+                linear-gradient(180deg, #03221c, #07513b 65%, #031b17);
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 6%;
+            border-bottom: 1px solid #ffffff25;
+        }
+
+        .brand {
+            font-size: 27px;
+            font-weight: bold;
+            color: #f4fff9;
+        }
+
+        .brand span {
+            color: #59e9b1;
+        }
+
+        .brand-leaf {
+            display: inline-block;
+            margin-right: 8px;
+            font-size: 35px;
+            animation: floatLeaf 3s ease-in-out infinite;
+        }
+
+        .status {
+            color: #c1e6d8;
+            font-size: 14px;
+        }
+
+        .hero {
+            text-align: center;
+            padding: 38px 20px 30px;
+            animation: appear 1s ease;
+        }
+
+        .hero-leaf {
+            font-size: 78px;
+            margin-bottom: 12px;
+            filter: drop-shadow(0 0 18px #5bff7b);
+            animation: floatLeaf 3s ease-in-out infinite;
+        }
+
+        .tag {
+            display: inline-block;
+            padding: 11px 18px;
+            margin-bottom: 20px;
+            border: 1px solid #42e8a0;
+            border-radius: 30px;
+            color: #d6ffed;
+            font-size: 12px;
+            letter-spacing: 1.5px;
+        }
+
+        h1 {
+            font-size: clamp(38px, 5.5vw, 68px);
+            line-height: 1.12;
+            margin-bottom: 20px;
+        }
+
+        h1 span {
+            color: #48edaa;
+        }
+
+        .description {
+            max-width: 620px;
+            margin: auto;
+            color: #d0e6dc;
+            line-height: 1.8;
+            font-size: 16px;
+        }
+
+        .explore-btn {
+            display: inline-block;
+            margin-top: 27px;
+            padding: 17px 28px;
+            border-radius: 14px;
+            background: linear-gradient(110deg, #5cf5a8, #8bffbd);
+            color: #04281b;
+            font-weight: bold;
+            font-size: 16px;
+            text-decoration: none;
+            transition: 0.3s;
+        }
+
+        .explore-btn:hover {
+            transform: translateY(-4px);
+            background: white;
+            box-shadow: 0 8px 35px #43f9a250;
+        }
+
+        .cards {
+            width: 92%;
+            max-width: 1250px;
+            margin: 10px auto 28px;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 18px;
+        }
+
+        .card {
+            text-align: center;
+            padding: 24px 17px;
+            min-height: 240px;
+            background: #03251fe8;
+            border: 1px solid #00c995;
+            border-radius: 22px;
+            transition: 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-7px);
+            border-color: #71ffb9;
+            background: #064034;
+        }
+
+        .card-icon {
+            width: 75px;
+            height: 75px;
+            margin: 0 auto 17px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid #16c997;
+            border-radius: 50%;
+            background: #07503b;
+            color: #65ffb5;
+            font-size: 37px;
+        }
+
+        .card h2 {
+            font-size: 19px;
+            margin-bottom: 12px;
+        }
+
+        .card p {
+            color: #c2dfd3;
+            font-size: 14px;
+            line-height: 1.7;
+        }
+
+        .card-arrow {
+            display: inline-block;
+            margin-top: 15px;
+            padding: 9px 14px;
+            border-radius: 50%;
+            background: #08735a;
+            font-size: 20px;
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px 15px;
+            border-top: 1px solid #ffffff25;
+            color: #c3ded3;
+            font-size: 13px;
+            line-height: 1.8;
+        }
+
+        @keyframes floatLeaf {
+            0%, 100% {
+                transform: translateY(0) rotate(-5deg);
+            }
+            50% {
+                transform: translateY(-10px) rotate(5deg);
+            }
+        }
+
+        @keyframes appear {
+            from {
+                opacity: 0;
+                transform: translateY(18px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 850px) {
+            .cards {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 500px) {
+            header {
+                padding: 18px 5%;
+            }
+
+            .brand {
+                font-size: 19px;
+            }
+
+            .status {
+                font-size: 11px;
+            }
+
+            .cards {
+                grid-template-columns: 1fr;
+                width: 88%;
+            }
+
+            .hero {
+                padding-top: 30px;
+            }
+
+            .tag {
+                font-size: 10px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+<div class="page">
+
+    <header>
+        <div class="brand">
+            <span class="brand-leaf">🌿</span>VillageCare <span>AI</span>
+        </div>
+        <div class="status">● Healthcare for Everyone</div>
+    </header>
+
+    <main>
+        <section class="hero">
+
+            <div class="hero-leaf">🌿</div>
+
+            <div class="tag">
+                ✦ SMARTER HEALTH. STRONGER VILLAGES.
+            </div>
+
+            <h1>
+                Better Healthcare,<br>
+                <span>Closer to Home.</span>
+            </h1>
+
+            <p class="description">
+                Welcome to VillageCare AI — a digital companion
+                for simple health education, awareness, and
+                better-informed healthcare decisions in rural
+                communities.
+            </p>
+
+            <a href="/assistant" class="explore-btn">
+                Explore Your Health Hub &nbsp; →
+            </a>
+
+        </section>
+
+        <section class="cards">
+
+            <article class="card">
+                <div class="card-icon">♡</div>
+                <h2>Health Awareness</h2>
+                <p>Learn simple, useful health information
+                   for everyday life.</p>
+                <div class="card-arrow">→</div>
+            </article>
+
+            <article class="card">
+                <div class="card-icon">✧</div>
+                <h2>AI Assistant</h2>
+                <p>Explore general health questions with
+                   your AI-powered assistant.</p>
+                <div class="card-arrow">→</div>
+            </article>
+
+            <article class="card">
+                <div class="card-icon">♧</div>
+                <h2>Village Wellness</h2>
+                <p>Encourage health awareness and accessible
+                   information for village communities.</p>
+                <div class="card-arrow">→</div>
+            </article>
+
+            <article class="card">
+                <div class="card-icon">✓</div>
+                <h2>Responsible Care</h2>
+                <p>Understand when to seek help from
+                   a qualified healthcare professional.</p>
+                <div class="card-arrow">→</div>
+            </article>
+
+        </section>
+    </main>
+
+    <footer>
+        <div>🌿 VillageCare AI · Technology with a purpose</div>
+        <div>
+            For health education only — not a substitute
+            for professional medical advice.
+        </div>
+    </footer>
+
+</div>
+</body>
+</html>
