@@ -44,7 +44,7 @@ def ask_assistant():
         client = genai.Client(api_key=api_key)
 
         response = client.models.generate_content(
-            model="gemini-3.1-flash",
+            model="gemini-3.1-flash-lite",
             contents=(
                 "You are VillageCare AI, a health education assistant "
                 "for village communities. Give simple, general health "
