@@ -1,3 +1,4 @@
+
 import os
 
 from flask import Flask, render_template, request, jsonify
@@ -8,66 +9,88 @@ load_dotenv()
 
 app = Flask(__name__)
 
-
-# Home dashboard
+# Homepage
 @app.route("/")
 def home():
     return render_template("dashboard.html")
 
 
-# Healthcare AI assistant page
+# AI Healthcare Assistant page
 @app.route("/assistant")
 def assistant():
     return render_template("index.html")
 
 
-# AI question API
+# Ask the AI assistant
 @app.route("/api/ask", methods=["POST"])
 def ask_assistant():
     data = request.get_json(silent=True) or {}
-    question = data.get("question", "")
+    question = data.get("question", "").strip()
 
-    if not isinstance(question, str) or not question.strip():
-        return jsonify({"error": "Please enter your question."}), 400
-
-    if len(question) > 1000:
-        return jsonify({"error": "Question must be under 1000 characters."}), 400
+    if not question:
+        return jsonify({"error": "Please enter a question."}), 400
 
     api_key = os.getenv("GEMINI_API_KEY")
 
     if not api_key:
+        app.logger.error("GEMINI_API_KEY is not configured")
         return jsonify({
-            "error": "API key missing. Check your .env file."
-        }), 503
+            "error": "AI service configuration is missing."
+        }), 500
+
+    prompt = f"""
+You are VillageCare AI, a helpful healthcare information assistant
+for people in villages and communities.
+
+IMPORTANT RULES:
+1. Always respond in English, regardless of the language used by the user.
+2. Use simple, clear English that is easy to understand.
+3. Provide general health information only.
+4. Do not diagnose illnesses or prescribe medicines.
+5. Encourage users to consult a qualified healthcare professional.
+6. For serious or life-threatening emergencies in India, advise calling 112
+   or going to the nearest emergency department.
+7. Be polite, supportive, and concise.
+
+User question: {question}
+"""
 
     try:
         client = genai.Client(api_key=api_key)
 
-        response = client.models.generate_content(
-            model="gemini-3.1-flash-lite",
-            contents=(
-                "You are VillageCare AI, a health education assistant "
-                "for village communities. Give simple, general health "
-                "information. Do not diagnose illnesses or prescribe "
-                "medicines. Encourage users to consult a qualified doctor. "
-                "For emergencies, advise immediate medical care. "
-                "In India, call 112 for emergencies. "
-                "Reply in the language used by the user when possible.\n\n"
-                f"Question: {question.strip()}"
-            ),
-        )
+        # Try the primary model first.
+        try:
+            response = client.models.generate_content(
+                model="gemini-3.1-flash-lite",
+                contents=prompt
+            )
+
+        except Exception:
+            app.logger.exception(
+                "Primary Gemini model failed; trying fallback model"
+            )
+
+            # Try the fallback model.
+            response = client.models.generate_content(
+                model="gemini-3.5-flash-lite",
+                contents=prompt
+            )
 
         answer = response.text
 
         if not answer:
-            answer = "Sorry, I could not generate an answer. Please try again."
+            raise ValueError("Gemini returned an empty response.")
 
-        return jsonify({"answer": answer})
+        return jsonify({"answer": answer}), 200
 
     except Exception:
         app.logger.exception("Gemini API request failed")
+
         return jsonify({
-            "error": "AI service unavailable. Check the terminal for details."
+            "error": (
+                "AI service is temporarily unavailable. "
+                "Please try again later."
+            )
         }), 502
 
 
