@@ -9,6 +9,7 @@ load_dotenv()
 
 app = Flask(__name__)
 
+
 # Homepage
 @app.route("/")
 def home():
@@ -25,10 +26,20 @@ def assistant():
 @app.route("/api/ask", methods=["POST"])
 def ask_assistant():
     data = request.get_json(silent=True) or {}
+
     question = data.get("question", "").strip()
+    language = data.get("language", "English").strip().lower()
 
     if not question:
-        return jsonify({"error": "Please enter a question."}), 400
+        return jsonify({
+            "error": "Please enter or speak your question."
+        }), 400
+
+    # Accept only the supported response languages.
+    if language in ("telugu", "te", "te-in"):
+        response_language = "Telugu"
+    else:
+        response_language = "English"
 
     api_key = os.getenv("GEMINI_API_KEY")
 
@@ -42,23 +53,29 @@ def ask_assistant():
 You are VillageCare AI, a helpful healthcare information assistant
 for people in villages and communities.
 
-IMPORTANT RULES:
-1. Always respond in English, regardless of the language used by the user.
-2. Use simple, clear English that is easy to understand.
-3. Provide general health information only.
-4. Do not diagnose illnesses or prescribe medicines.
-5. Encourage users to consult a qualified healthcare professional.
-6. For serious or life-threatening emergencies in India, advise calling 112
-   or going to the nearest emergency department.
-7. Be polite, supportive, and concise.
+RESPONSE LANGUAGE:
+Reply entirely in {response_language}.
+If the response language is Telugu, use natural Telugu written in Telugu script.
+Do not reply in English unless needed for a medical term.
 
-User question: {question}
+IMPORTANT HEALTH SAFETY RULES:
+1. Provide general health information only.
+2. Do not claim to diagnose illnesses.
+3. Do not prescribe medicines or dosages.
+4. Encourage users to consult a qualified healthcare professional.
+5. For serious or life-threatening emergencies in India,
+   advise calling 112 or going to the nearest emergency department.
+6. Use simple, clear, supportive language.
+7. If the question is unrelated to health, politely explain that
+   you mainly help with general healthcare information.
+
+User question:
+{question}
 """
 
     try:
         client = genai.Client(api_key=api_key)
 
-        # Try the primary model first.
         try:
             response = client.models.generate_content(
                 model="gemini-3.1-flash-lite",
@@ -70,7 +87,6 @@ User question: {question}
                 "Primary Gemini model failed; trying fallback model"
             )
 
-            # Try the fallback model.
             response = client.models.generate_content(
                 model="gemini-3.5-flash-lite",
                 contents=prompt
@@ -89,7 +105,7 @@ User question: {question}
         return jsonify({
             "error": (
                 "AI service is temporarily unavailable. "
-                "Please try again later."
+                "Please check the Flask terminal."
             )
         }), 502
 
