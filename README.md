@@ -1,73 +1,75 @@
-# 🌿 VillageCare AI
+# 🏥 VillageCare AI
 
-### Better Healthcare, Closer to Home
+### AI-Powered Healthcare Information Assistant for Rural Communities
 
-VillageCare AI is an AI-powered healthcare information assistant designed to help people in rural and village communities access simple, easy-to-understand health information.
+VillageCare AI is a web-based project designed to make general healthcare information more accessible to people in villages and communities. It combines an AI-powered assistant, multilingual interaction, voice features, and quick access to healthcare resources in one simple interface.
 
-The project uses Python, Flask, and Google Gemini AI to answer general health-related questions.
+🌐 **Live Website:** https://village-care-ai.vercel.app/assistant
 
-## 🎯 Problem Statement
+💻 **GitHub Repository:** https://github.com/priyanjalikunja-glitch/VillageCare-AI
 
-Many rural communities face challenges accessing reliable healthcare information. VillageCare AI aims to make general health education more accessible through an easy-to-use web application.
+---
 
-## 💡 Features
+## 📌 Problem Statement
 
-- 🤖 **AI Health Assistant:** Answers general health questions using Google Gemini AI.
-- 🌿 **Simple Interface:** Clean and user-friendly website.
-- 🏥 **Health Education:** Provides general information about health and wellness.
-- 🌐 **Web-Based Application:** Accessible through a web browser.
-- 📱 **Responsive Design:** Designed to work across different screen sizes.
+People in rural and underserved communities may face difficulties accessing understandable healthcare information, finding nearby healthcare resources, and using digital health platforms because of language and accessibility barriers.
+
+## 💡 Our Solution
+
+VillageCare AI provides a simple web interface where users can explore healthcare-related information, ask general health questions, and access useful healthcare resources.
+
+## ✨ Key Features
+
+- 🤖 **AI Healthcare Assistant:** Ask general healthcare questions and receive AI-generated information.
+- 🌐 **Multilingual Support:** Interact in English, Telugu, and Hindi.
+- 🎤 **Voice Input:** Ask questions using speech where browser support is available.
+- 🔊 **Voice Output:** Listen to the assistant's responses.
+- 🏥 **Nearby Hospitals:** Quickly open Google Maps to find hospitals.
+- 💊 **Medical Shops:** Open Google Maps to search for medical shops.
+- 📚 **Health Awareness:** Access a dedicated section for health awareness information.
+- 🩺 **Health Services:** Explore the healthcare services section.
+- 📱 **Simple User Interface:** Navigate through separate sections using interactive menu cards.
 
 ## 🛠️ Technologies Used
 
-- Python
-- Flask
-- HTML
-- CSS
-- JavaScript
-- Google Gemini API
-- python-dotenv
+| Technology | Purpose |
+|---|---|
+| HTML | Web page structure |
+| CSS | Styling and responsive layout |
+| JavaScript | Interactive menu and voice features |
+| Python | Backend programming |
+| Flask | Web server and API routes |
+| Google Gemini API | AI-generated responses |
+| Web Speech API | Browser-based speech input and output |
+| Google Maps | Finding nearby healthcare resources |
+| Git and GitHub | Version control and source code |
+| Vercel | Deployment |
 
-## 📁 Project Structure
+## ⚙️ Run the Project Locally
 
-```text
-VillageCare-AI/
-├── app.py
-├── requirements.txt
-├── .env
-├── .gitignore
-├── README.md
-├── templates/
-│   └── index.html
-└── static/
-    ├── css/
-    │   └── style.css
-    ├── js/
-    │   └── script.js
-    └── images/
-```
+### Prerequisites
 
-## ⚙️ Installation and Setup
+- Python 3.11 or a compatible Python version
+- Visual Studio Code
+- A Google Gemini API key
 
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/YOUR-USERNAME/VillageCare-AI.git
+git clone https://github.com/priyanjalikunja-glitch/VillageCare-AI.git
 cd VillageCare-AI
 ```
 
-Replace `YOUR-USERNAME` with your GitHub username.
-
-### 2. Create a virtual environment
+### 2. Create and activate a virtual environment
 
 ```bash
 python -m venv .venv
 ```
 
-Activate it on Windows PowerShell:
+Windows PowerShell:
 
 ```powershell
-.venv\Scripts\Activate.ps1
+.\.venv\Scripts\Activate.ps1
 ```
 
 ### 3. Install dependencies
@@ -78,44 +80,56 @@ python -m pip install -r requirements.txt
 
 ### 4. Configure the API key
 
-Create a `.env` file in the project root directory and add your Google Gemini API key:
+Create a `.env` file in the project root and add:
 
-```dotenv
-GEMINI_API_KEY=your_api_key_here
+```env
+GEMINI_API_KEY=your_gemini_api_key
 ```
 
-Get an API key from [Google AI Studio](https://aistudio.google.com/apikey).
+Replace `your_gemini_api_key` with your own API key. Keep `.env` private and never upload your actual API key to GitHub.
 
-**Security:** Never upload your `.env` file or API key to GitHub.
-
-### 5. Run the application
+### 5. Start the application
 
 ```bash
 python app.py
 ```
 
-Open your browser and visit:
+Open the application in your browser:
 
-```text
-http://127.0.0.1:5000
-```
+http://127.0.0.1:5000/
 
-## 🔒 Healthcare Disclaimer
+To open the AI assistant directly:
 
-VillageCare AI provides general health education and is not a substitute for professional medical advice, diagnosis, or treatment. Always consult a qualified healthcare professional for personal medical concerns. Seek emergency care immediately when needed.
+http://127.0.0.1:5000/assistant
+
+## 🩺 Healthcare Safety
+
+VillageCare AI is intended for general healthcare information and awareness. It does not replace a qualified healthcare professional, medical diagnosis, or treatment.
+
+- Do not use AI responses as a substitute for professional medical advice.
+- Consult a qualified healthcare professional for medical concerns.
+- In a serious emergency in India, call **112** or go to the nearest emergency department.
 
 ## 🚀 Future Improvements
 
-- Support for more Indian languages.
-- Information about nearby healthcare facilities.
-- Voice-based health questions.
-- Health awareness resources for rural communities.
-- Improved accessibility for users with limited digital experience.
+- Add more regional languages.
+- Improve mobile accessibility.
+- Expand verified healthcare resource information.
+- Add more health awareness materials.
+- Improve error handling and accessibility testing.
 
-## 🤝 Contributing
+## 🎯 Project Goal
 
-Suggestions and contributions to improve VillageCare AI are welcome.
+The goal of VillageCare AI is to explore how artificial intelligence and accessible web technologies can help make general healthcare information easier to access for rural communities.
 
-## 📄 License
+## 👩‍💻 Project Information
 
-This project is available for educational and learning purposes. A formal open-source license can be added when one is selected.
+**Project Name:** VillageCare AI  
+**Category:** Artificial Intelligence / Healthcare Technology  
+**Backend:** Python and Flask  
+**AI Integration:** Google Gemini API  
+**Deployment:** Vercel
+
+---
+
+*Built with ❤️ to explore accessible healthcare information for rural communities.*
